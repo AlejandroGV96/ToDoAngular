@@ -1,31 +1,34 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {MatButtonModule} from "@angular/material/button";
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
-import { MainWindowComponent } from './main-window/main-window.component';
+
+import { AngularMaterialModule } from "./angular-material.module";
+import { NavFooterComponent } from './nav-footer/nav-footer.component';
+import { NewTaskComponent } from "./new-task.component";
+
+import { OverlayModule } from "@angular/cdk/overlay";
+import {MatInputModule} from "@angular/material/input";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavBarComponent,
-    MainWindowComponent
+    NavFooterComponent,
+    NewTaskComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatButtonModule,
-    MatToolbarModule
-  ],
-  exports: [
-    MatToolbarModule,
-    MatButtonModule
+    AngularMaterialModule,
+    OverlayModule,
+    MatInputModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

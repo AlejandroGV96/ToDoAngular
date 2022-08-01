@@ -1,0 +1,41 @@
+<div class="container">
+  <mat-card>
+    <div class="header">
+      <h2>Upcoming tasks</h2>
+      <mat-icon
+        matTooltip="Add new task"
+        (click)="addTask()"
+      >add</mat-icon>
+    </div>
+    <mat-card-content>
+      <div *ngIf="toDoList.length <= 0">
+        No items in the list!
+      </div>
+      <mat-list *ngIf="toDoList.length > 0">
+        <mat-list-item *ngFor="let item of toDoList" #item>
+          <div class="list-item">
+            <p class="item-name">
+              {{ item.content }}
+            </p>
+            <mat-icon class="icon-button add"
+              matTooltip="Complete task"
+              (click)="completeTask(item)">
+              check_circle_outline</mat-icon>
+            <mat-icon class="icon-button delete"
+              matTooltip="Remove task"
+              (click)="deleteTask(item)"
+            >highlight_off</mat-icon>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      Here we will be showing some stats!
+    </mat-card-header>
+    <mat-card-content>
+      the stats will be here!
+    </mat-card-content>
+  </mat-card>
+</div>
