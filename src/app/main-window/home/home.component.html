@@ -8,22 +8,30 @@
       >add</mat-icon>
     </div>
     <mat-card-content>
-      <div *ngIf="toDoList.length <= 0">
+      <div *ngIf="tasks.length <= 0">
         No items in the list!
       </div>
-      <mat-list *ngIf="toDoList.length > 0">
-        <mat-list-item *ngFor="let item of toDoList" #item>
+      <mat-list *ngIf="tasks.length > 0">
+        <mat-list-item *ngFor="let item of tasks" #itemEl>
           <div class="list-item">
             <p class="item-name">
-              {{ item.content }}
+              {{item.createdAt.toString().slice(0,10) + " | " + item.content }}
             </p>
-            <mat-icon class="icon-button add"
+            <mat-icon
+              class="icon-button add"
               matTooltip="Complete task"
-              (click)="completeTask(item)">
+              (click)="completeTask(item); disableItem(itemEl)"
+
+            >
               check_circle_outline</mat-icon>
+            <mat-icon
+              class="icon-button update"
+              matTooltip="Modify task"
+              (click)="updateTask(item.id)">
+              change_history</mat-icon>
             <mat-icon class="icon-button delete"
               matTooltip="Remove task"
-              (click)="deleteTask(item)"
+              (click)="deleteTask(item.id); disableItem(itemEl)"
             >highlight_off</mat-icon>
           </div>
         </mat-list-item>
@@ -32,10 +40,18 @@
   </mat-card>
   <mat-card>
     <mat-card-header>
-      Here we will be showing some stats!
+      Completed Tasks:
     </mat-card-header>
     <mat-card-content>
-      the stats will be here!
+      <mat-list *ngIf="completedTasks.length > 0">
+        <mat-list-item *ngFor="let item of completedTasks" #itemEl>
+          <div class="list-item">
+            <p class="item-name">
+              {{item.date.toString().slice(0,10) + " | " + item.content }}
+            </p>
+          </div>
+        </mat-list-item>
+      </mat-list>
     </mat-card-content>
   </mat-card>
 </div>

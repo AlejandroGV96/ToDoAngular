@@ -14,6 +14,10 @@ import { OverlayModule } from "@angular/cdk/overlay";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule} from "@angular/forms";
 
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { InMemoryDataService } from './in-memory-data.service';
+import { HttpClientModule } from "@angular/common/http";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,7 +32,11 @@ import {FormsModule} from "@angular/forms";
     AngularMaterialModule,
     OverlayModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    HttpClientInMemoryWebApiModule.forRoot(
+      InMemoryDataService, { dataEncapsulation: false}
+    ),
   ],
   providers: [],
   bootstrap: [AppComponent]

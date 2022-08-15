@@ -51,7 +51,6 @@ export class NewTaskComponent implements OnInit {
 
   onSubmit(e: any){
     e.preventDefault();
-    console.log(e);
     this.dialogRef.close(this.data)
   }
 

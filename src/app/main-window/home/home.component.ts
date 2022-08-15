@@ -1,7 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {NewTaskComponent} from "../../new-task.component";
 import {MatDialog} from "@angular/material/dialog";
-import {HomeService} from "./home.service.ts.service";
+import {HomeService} from "./home.service";
+import {TaskService} from "./task.service";
+import {TaskModel} from "../../task.model";
+import {InMemoryDataService} from "../../in-memory-data.service";
+import {MatListItem} from "@angular/material/list";
 
 export interface IListItem {
   date: string;
@@ -14,49 +18,94 @@ export interface IListItem {
 })
 export class HomeComponent implements OnInit {
 
-  toDoList: IListItem[] = [];
-  completedTasks: number = 0;
+  tasks: TaskModel[] = [];
+  completedTasks: {content: string, date: Date}[] = [];
+  private _openDialog(data: string | null) {
+    return this.dialog.open(NewTaskComponent, {
+      hasBackdrop: true,
+      panelClass: ['modal'],
+      backdropClass: 'modal-background',
+      data: data
+    })
+  }
+
   constructor(
     private dialog: MatDialog,
-    private homeService: HomeService
+    private homeService: HomeService,
+    private tasksService: TaskService,
+    private dataService: InMemoryDataService
   ) {
-    this.toDoList = this.homeService.getAllTasks();
+    this.getTasks();
+  }
+
+  getTasks() {
+    this.tasksService.getTasks().subscribe({
+      next: (value) => {
+        this.tasks = value;
+      }
+    })
   }
 
   ngOnInit(): void {
   }
 
   addTask(): void {
-    const dialogRef = this.dialog.open(NewTaskComponent, {
-      hasBackdrop: true,
-      panelClass: ['modal'],
-      backdropClass: 'modal-background',
-      //data: "init data"
-    })
+    const dialogRef = this._openDialog(null);
     dialogRef.afterClosed().subscribe(result => {
       if(!result) return;
-      let date = new Date;
-      let task: IListItem = {
-        date: date.toUTCString(),
-        content: result
+      let task: TaskModel = {
+        id: this.dataService.genId(this.tasks),
+        content: result,
+        createdAt: new Date()
       };
-      this.toDoList.push(task);
-      this.homeService.storeTask(task);
-      console.log(this.homeService.getTask(task));
-      //TODO: UPDATE LIST ON REMOVE!
+      this.tasksService.addTask(task).subscribe({
+        complete: () => {
+          this.getTasks();
+        }
+      });
     })
   }
 
-  completeTask(item: IListItem): void {
-    this.toDoList =  this.toDoList.filter( current => {
-      return current.content !== item.content;
+  deleteTask(id: number) {
+    this.tasksService.deleteTask(id).subscribe({
+      complete: () => {
+        this.getTasks();
+      }
+    });
+  }
+  updateTask(id: number): void {
+    let task = this.tasks.find(task => task.id === id);
+    const dialogRef = this._openDialog(task?.content || null);
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return;
+      let updatedTask: TaskModel = {
+        id: id,
+        content: result,
+        createdAt: task!.createdAt
+      };
+      this.tasksService.updateTask(updatedTask).subscribe({
+        complete: () => {
+          this.getTasks();
+        }
+      });
     })
   }
 
-  deleteTask(item: IListItem): void {
-    this.toDoList =  this.toDoList.filter( current => {
-      return current.content !== item.content;
-    })
-    this.homeService.deleteTask(item);
+  completeTask(task: TaskModel){
+    this.tasksService.deleteTask(task.id).subscribe({
+      next: () => {
+        this.getTasks();
+      },
+      complete: () => {
+        this.completedTasks.push({
+          content: task.content,
+          date: new Date()
+        })
+      }
+    });
+  }
+
+  disableItem(el: MatListItem) {
+    el.disabled = true;
   }
 }
